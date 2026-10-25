@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jeevadhara Clinic - Appointment Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <style>
+    :root { --pine:#0f3d3a; --pine2:#174f4a; --teal:#1fa38f; --sand:#f6f0e6; --sand2:#ece3d3; --cream:#fffdf8; --coral:#ff7a59; --coral2:#e9603f;
+            --ink:#17302c; --muted:#5f716c; --line:#e3dccd; --danger:#c0392b; --ok:#2e8b57;
+            --serif:"Fraunces","Playfair Display",Georgia,"Times New Roman",serif; --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+            padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+    html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+    * { box-sizing: border-box; }
+    [hidden] { display:none !important; }
+    body { margin:0; font-family:var(--sans); background:var(--sand); color:var(--ink); line-height:1.6; }
+    h1,h2,h3 { line-height:1.15; margin:0; font-family:var(--serif); font-weight:600; letter-spacing:-.01em; }
+    .container { max-width:1120px; margin:0 auto; padding:0 22px; }
+
+    /* top strip + nav */
+    .topbar { background:var(--pine); color:#bcd7cf; font-size:13px; }
+    .topbar .container { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-top:8px; padding-bottom:8px; }
+    .topbar b { color:#fff; font-weight:600; }
+    .nav { background:var(--cream); border-bottom:1px solid var(--line); }
+    .nav .container { display:flex; align-items:center; justify-content:space-between; padding-top:14px; padding-bottom:14px; gap:16px; flex-wrap:wrap; }
+    .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--pine); }
+    .brand svg { width:44px; height:44px; flex:none; }
+    .brand strong { display:block; font-family:var(--serif); font-size:23px; font-weight:700; }
+    .brand small { display:block; font-size:11px; color:var(--muted); letter-spacing:1.4px; text-transform:uppercase; }
+    .nav ul { list-style:none; display:flex; gap:28px; margin:0; padding:0; }
+    .nav a.link { text-decoration:none; color:var(--ink); font-weight:600; font-size:15px; position:relative; }
+    .nav a.link::after { content:""; position:absolute; left:0; right:100%; bottom:-4px; height:2px; background:var(--coral); transition:right .2s; }
+    .nav a.link:hover::after { right:0; }
+    .cta-link { background:var(--coral); color:#fff !important; padding:11px 20px; border-radius:999px; text-decoration:none; font-weight:700; font-size:14px; box-shadow:0 6px 16px rgba(255,122,89,.35); transition:transform .15s, background .15s; }
+    .cta-link:hover { background:var(--coral2); transform:translateY(-1px); }
+    @media (max-width:760px){ .nav ul{display:none;} }
+
+    /* hero */
+    .hero { background:var(--sand); padding:56px 0 64px; position:relative; overflow:hidden; }
+    .hero::before { content:""; position:absolute; left:-140px; bottom:-180px; width:420px; height:420px; border-radius:50%; background:var(--sand2); }
+    .hero-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:40px; align-items:center; position:relative; z-index:1; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:1.4px; text-transform:uppercase; color:var(--pine); background:#fff; border:1px solid var(--line); padding:7px 14px; border-radius:999px; margin-bottom:20px; font-weight:700; }
+    .eyebrow::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--coral); }
+    .hero h2 { font-size:54px; color:var(--pine); margin-bottom:18px; }
+    .hero h2 em { font-style:italic; color:var(--coral2); position:relative; white-space:nowrap; }
+    .hero h2 em::after { content:""; position:absolute; left:0; right:0; bottom:2px; height:8px; background:rgba(255,122,89,.22); z-index:-1; border-radius:4px; }
+    .hero p.lead { max-width:520px; font-size:17px; color:var(--muted); margin:0 0 26px; }
+    .stats { display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; }
+    .stats div { background:#fff; border:1px solid var(--line); border-radius:16px; padding:12px 18px; min-width:96px; }
+    .stats div b { display:block; font-family:var(--serif); font-size:26px; color:var(--pine); }
+    .stats div span { font-size:12px; color:var(--muted); }
+    .hero-art { position:relative; justify-self:center; width:100%; max-width:360px; }
+    .arch { background:linear-gradient(170deg,var(--pine2),var(--pine)); border-radius:999px 999px 28px 28px; height:420px; position:relative; overflow:hidden; box-shadow:0 30px 60px rgba(15,61,58,.28); }
+    .arch::before { content:""; position:absolute; inset:14px; border:1.5px dashed rgba(255,255,255,.22); border-radius:999px 999px 18px 18px; }
+    .arch svg { position:absolute; inset:0; width:100%; height:100%; }
+    .ecg { stroke-dasharray:1; stroke-dashoffset:1; animation:beat 2.8s linear infinite; }
+    @keyframes beat { 0%{stroke-dashoffset:1;} 70%,100%{stroke-dashoffset:0;} }
+    .chip { position:absolute; background:#fff; border-radius:14px; padding:10px 14px; font-size:13px; font-weight:700; color:var(--pine); box-shadow:0 12px 28px rgba(15,61,58,.2); display:flex; align-items:center; gap:9px; animation:floaty 5s ease-in-out infinite; }
+    .chip i { width:10px; height:10px; border-radius:50%; background:var(--teal); flex:none; }
+    .chip.c1 { left:-26px; top:70px; } .chip.c2 { right:-20px; bottom:70px; animation-delay:-2.5s; } .chip.c2 i { background:var(--coral); }
+    @keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+    @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} .hero-art{display:none;} .hero h2{font-size:38px;} }
+
+    .booking-wrap { margin-top:0; padding-bottom:20px; position:relative; z-index:2; }
+
+    /* shared form bits */
+    .notice { font-size:13px; color:#7a5b00; background:#fff6da; border:1px solid #efdb98; padding:9px 12px; border-radius:10px; margin:0 0 18px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .grid.three { grid-template-columns:1fr 1fr 1fr; }
+    @media (max-width:900px){ .grid.three{grid-template-columns:1fr 1fr;} }
+    @media (max-width:640px){ .grid,.grid.three{grid-template-columns:1fr;} }
+    .full { grid-column:1 / -1; }
+    label { display:block; font-weight:700; font-size:13px; margin-bottom:6px; color:var(--pine); }
+    label span { color:var(--coral2); }
+    input, select { width:100%; padding:12px 13px; font-size:15px; font-family:inherit; color:var(--ink); border:1.5px solid var(--line); border-radius:12px; background:var(--cream); transition:border-color .15s, box-shadow .15s; }
+    input:hover, select:hover { border-color:#cfc5b0; }
+    input:focus, select:focus { outline:none; border-color:var(--teal); box-shadow:0 0 0 4px rgba(31,163,143,.16); background:#fff; }
+    select:disabled { background:#efeadf; cursor:not-allowed; color:#9a9f98; }
+    button { font-family:inherit; font-size:15px; padding:12px; border:0; border-radius:12px; cursor:pointer; }
+    #confirm-booking { width:100%; margin-top:6px; padding:16px; font-size:16px; background:var(--pine); color:#fff; font-weight:700; letter-spacing:.2px; box-shadow:0 10px 22px rgba(15,61,58,.25); transition:background .15s, transform .15s; }
+    #confirm-booking:hover:not(:disabled) { background:var(--coral2); transform:translateY(-1px); }
+    #confirm-booking:disabled { background:#c9c5ba; cursor:not-allowed; box-shadow:none; }
+    #form-message { margin-top:16px; min-height:44px; padding:12px 14px; border-radius:12px; background:#eef5f3; border-left:4px solid var(--teal); font-size:14px; }
+    #form-message.error { background:#fdecea; border-left-color:var(--danger); color:#8e2a1f; }
+    #form-message.success { background:#e8f6ec; border-left-color:var(--ok); color:#1d5e3a; }
+    #booking-summary { margin-top:10px; font-weight:700; font-size:14px; color:var(--pine); }
+    #reopen-modal { margin-top:16px; background:transparent; color:var(--pine); border:1.5px solid var(--pine); font-weight:700; }
+    #reopen-modal:hover { background:var(--pine); color:#fff; }
+    .check { display:flex; align-items:center; gap:10px; margin-top:18px; font-weight:600; font-size:14px; cursor:pointer; background:var(--sand); padding:12px 14px; border-radius:12px; border:1.5px dashed #cbbfa6; color:var(--ink); }
+    .check input { width:18px; height:18px; margin:0; accent-color:var(--teal); }
+
+    /* split panels */
+    .split { display:grid; grid-template-columns:5fr 7fr; background:var(--cream); border-radius:28px; overflow:hidden; box-shadow:0 30px 70px rgba(15,61,58,.16); border:1px solid var(--line); }
+    .auth-split { max-width:940px; margin:0 auto; }
+    .book-split { grid-template-columns:4fr 8fr; }
+    .side { position:relative; color:#fff; padding:34px 30px; background:var(--pine); overflow:hidden; }
+    .side::before { content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.11) 1.2px,transparent 1.3px); background-size:18px 18px; opacity:.8; }
+    .side::after { content:""; position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle,rgba(255,122,89,.35),transparent 65%); right:-120px; bottom:-120px; }
+    .side > * { position:relative; z-index:1; }
+    .side .logo { width:54px; height:54px; margin-bottom:18px; }
+    .side h2 { font-size:30px; margin-bottom:12px; }
+    .side p.lead { color:#bcd7cf; font-size:15px; margin:0 0 22px; }
+    .side ul.ticks { list-style:none; margin:0; padding:0; }
+    .side ul.ticks li { display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; font-size:14px; color:#e4f1ed; }
+    .side ul.ticks li::before { content:"\2713"; flex:none; width:22px; height:22px; border-radius:50%; background:var(--coral); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+    .side .pulse { margin-top:26px; width:100%; height:46px; }
+    .pane { padding:32px 36px 36px; min-width:0; }
+    .pane-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px; }
+    .pane-head h1 { font-size:30px; color:var(--pine); }
+    .pane-head p { margin:6px 0 0; color:var(--muted); font-size:14px; }
+    #close-auth { background:var(--sand); color:var(--muted); width:36px; height:36px; border-radius:50%; padding:0; font-size:20px; line-height:1; flex:none; }
+    #close-auth:hover { background:var(--sand2); }
+    @media (max-width:820px){ .split,.book-split{grid-template-columns:1fr;} .pane{padding:24px 18px 28px;} .side{padding:26px 20px;} }
+
+    .tabs { display:flex; gap:6px; background:var(--sand); padding:5px; border-radius:14px; margin-bottom:20px; }
+    .tabs button { flex:1; background:transparent; color:var(--muted); font-weight:700; padding:11px; }
+    .tabs button.active { background:#fff; color:var(--pine); box-shadow:0 2px 8px rgba(15,61,58,.12); }
+    .auth-form .field { margin-bottom:16px; }
+    .auth-form .primary { width:100%; margin-top:6px; padding:15px; font-size:16px; background:var(--pine); color:#fff; font-weight:700; box-shadow:0 10px 22px rgba(15,61,58,.22); transition:background .15s; }
+    .auth-form .primary:hover { background:var(--coral2); }
+    .auth-msg { margin-top:14px; min-height:44px; padding:12px 14px; border-radius:12px; background:#eef5f3; border-left:4px solid var(--teal); font-size:14px; }
+    .auth-msg.error { background:#fdecea; border-left-color:var(--danger); color:#8e2a1f; }
+    .auth-msg.success { background:#e8f6ec; border-left-color:var(--ok); color:#1d5e3a; }
+    .hint { font-size:12px; color:var(--muted); margin-top:5px; }
+
+    /* booking sidebar */
+    .side .who { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.14); border-radius:16px; padding:12px 14px; margin-bottom:22px; font-size:13px; }
+    .side .who b { display:block; font-size:15px; word-break:break-all; }
+    .who-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .vb { display:inline-block; background:var(--coral); color:#fff; text-decoration:none; padding:8px 14px; border-radius:12px; font-size:13px; font-weight:700; }
+    .vb:hover { background:var(--coral2); }
+    #logout-button { margin-top:0; background:transparent; color:#fff; border:1px solid rgba(255,255,255,.45); padding:7px 14px; font-size:13px; font-weight:700; }
+    #logout-button:hover { background:#fff; color:var(--danger); }
+    .side h3 { font-family:var(--sans); font-size:12px; letter-spacing:1.6px; text-transform:uppercase; color:#9cc7bc; margin-bottom:12px; font-weight:700; }
+    .ticket { background:var(--cream); color:var(--ink); border-radius:18px; padding:16px 18px 6px; position:relative; }
+    .ticket::before,.ticket::after { content:""; position:absolute; top:78px; width:18px; height:18px; border-radius:50%; background:var(--pine); }
+    .ticket::before { left:-9px; } .ticket::after { right:-9px; }
+    .ticket .doc { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:2px dashed var(--line); margin-bottom:4px; }
+    .avatar { width:46px; height:46px; border-radius:50%; background:var(--sand2); color:var(--pine); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:700; font-size:17px; flex:none; transition:background .2s,color .2s; }
+    .avatar.on { background:var(--coral); color:#fff; }
+    .ticket .doc small { color:var(--muted); font-size:12px; line-height:1.3; }
+    .ticket .row { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:13px; }
+    .ticket .row:last-child { border-bottom:0; }
+    .ticket .row span { color:var(--muted); flex:none; }
+    .ticket .row b { color:var(--pine); text-align:right; font-weight:700; word-break:break-word; }
+    .ticket .row b.empty { color:#b3b8b0; font-weight:400; }
+
+    /* numbered steps */
+    .step { margin-bottom:26px; }
+    .step h3 { display:flex; align-items:center; gap:12px; font-size:20px; color:var(--pine); margin-bottom:14px; }
+    .step h3 i { font-style:normal; width:32px; height:32px; border-radius:50%; border:2px solid var(--coral); color:var(--coral2); display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-size:14px; font-weight:800; flex:none; transition:all .2s; }
+    .step.done h3 i { background:var(--teal); border-color:var(--teal); color:#fff; font-size:0; }
+    .step.done h3 i::after { content:"\2713"; font-size:15px; }
+
+    #bookings-section { margin-top:34px; border-top:1px solid var(--line); padding-top:22px; }
+    #bookings-section h2 { margin:0 0 12px; font-size:22px; color:var(--pine); display:flex; align-items:center; gap:10px; }
+    #booking-count { display:inline-block; min-width:28px; text-align:center; background:var(--coral); color:#fff; border-radius:14px; padding:2px 9px; font-size:14px; font-family:var(--sans); }
+    #booking-list { list-style:none; margin:0; padding:0; min-height:132px; }
+    .booking-item { padding:13px 14px; margin-bottom:8px; border:1px solid var(--line); border-left:4px solid var(--teal); border-radius:12px; background:var(--cream); font-size:14px; animation:slidein .3s ease; }
+    @keyframes slidein { from { transform:translateX(40px); } to { transform:translateX(0); } }
+    #no-bookings { color:var(--muted); margin:8px 0; }
+    .slider-controls { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; }
+    .slider-controls button { background:var(--pine); color:#fff; padding:10px 18px; font-weight:700; }
+    .slider-controls button:disabled { background:#c9c5ba; cursor:not-allowed; }
+    #slide-indicator { font-weight:700; color:var(--pine); font-size:14px; }
+    #clear-bookings { margin-top:16px; background:transparent; color:var(--danger); border:1px solid var(--danger); padding:9px 16px; font-size:14px; }
+    #clear-bookings:hover { background:var(--danger); color:#fff; }
+
+    #confirmation-modal { display:none; position:fixed; inset:0; background:rgba(10,36,33,.62); align-items:center; justify-content:center; z-index:50; }
+    #confirmation-modal.open { display:flex; }
+    .modal-content { background:var(--cream); width:min(460px,92vw); padding:28px; border-radius:22px; border-top:6px solid var(--coral); box-shadow:0 24px 60px rgba(0,0,0,.35); }
+    .modal-content h2 { margin:0 0 10px; color:var(--pine); }
+    #close-modal { background:var(--pine); color:#fff; width:100%; margin-top:16px; font-weight:700; }
+
+    /* why us */
+    section.band { padding:76px 0 8px; }
+    .section-title { text-align:center; margin-bottom:38px; }
+    .section-title h3 { font-size:38px; color:var(--pine); }
+    .section-title p { color:var(--muted); margin:10px auto 0; max-width:560px; }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .feature { background:var(--cream); border:1px solid var(--line); border-radius:24px; padding:30px 26px 28px; position:relative; overflow:hidden; transition:transform .2s, box-shadow .2s; }
+    .feature:nth-child(2) { margin-top:26px; background:var(--pine); border-color:var(--pine); }
+    .feature:nth-child(2) h4 { color:#fff; } .feature:nth-child(2) p { color:#bcd7cf; }
+    .feature:hover { transform:translateY(-4px); box-shadow:0 18px 36px rgba(15,61,58,.14); }
+    .feature .num { position:absolute; right:18px; top:6px; font-family:var(--serif); font-size:70px; font-weight:700; color:transparent; -webkit-text-stroke:1.5px rgba(15,61,58,.14); line-height:1; }
+    .feature:nth-child(2) .num { -webkit-text-stroke-color:rgba(255,255,255,.2); }
+    .feature .ic { width:52px; height:52px; border-radius:16px; background:#fde6dd; color:var(--coral2); display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+    .feature:nth-child(2) .ic { background:rgba(255,255,255,.12); color:#ffb39e; }
+    .feature .ic svg { width:26px; height:26px; }
+    .feature h4 { margin:0 0 8px; font-family:var(--serif); font-size:22px; color:var(--pine); }
+    .feature p { margin:0; color:var(--muted); font-size:15px; }
+    @media (max-width:900px){ .features{grid-template-columns:1fr;} .feature:nth-child(2){margin-top:0;} }
+
+    .emergency { background:var(--coral); color:#fff; }
+    .emergency .container { display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; padding-top:30px; padding-bottom:30px; }
+    .emergency h3 { font-size:28px; }
+    .emergency p { margin:4px 0 0; color:#fff3ee; }
+    .emergency .num { font-family:var(--serif); font-size:34px; font-weight:700; background:#fff; color:var(--coral2); padding:8px 22px; border-radius:999px; }
+    footer { background:var(--pine); color:#9cc0b6; font-size:14px; }
+    footer .container { display:grid; grid-template-columns:2fr 1fr 1fr; gap:30px; padding-top:40px; padding-bottom:24px; }
+    footer h5 { font-family:var(--serif); color:#fff; margin:0 0 10px; font-size:18px; font-weight:600; }
+    footer p { margin:0 0 6px; }
+    footer .copy { border-top:1px solid rgba(255,255,255,.12); text-align:center; padding:14px 20px; font-size:13px; }
+    @media (max-width:700px){ footer .container{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+  <div class="topbar"><div class="container">
+    <span>Mon&ndash;Sat: <b>9:00 AM &ndash; 6:00 PM</b> &nbsp;|&nbsp; Emergency: <b>24 x 7</b></span>
+    <span>Kakinada &bull; Rajahmundry &bull; Visakhapatnam &bull; Vijayawada</span>
+  </div></div>
+
+  <nav class="nav"><div class="container">
+    <a class="brand" href="#top" aria-label="Jeevadhara Clinic home">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3C24 3 8 20 8 30a16 16 0 0 0 32 0C40 20 24 3 24 3z" fill="#0f3d3a"/><path d="M21 22h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#fff" transform="translate(0,-3) scale(1)"/><circle cx="37" cy="10" r="4.5" fill="#ff7a59"/></svg>
+      <span><strong>Jeevadhara Clinic</strong><small>Care that flows</small></span>
+    </a>
+    <ul>
+      <li><a class="link" id="nav-book" href="#auth">Book Appointment</a></li>
+      <li><a class="link" id="nav-bookings" href="bookings.html" hidden>My Bookings</a></li>
+      <li><a class="link" href="#why">Why Us</a></li>
+      <li><a class="link" href="#contact">Contact</a></li>
+    </ul>
+    <a class="cta-link" id="nav-cta" href="#auth">Login / Register</a>
+  </div></nav>
+
+  <section class="hero" id="top"><div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Multi-speciality clinic network</span>
+      <h2>Care that <em>flows</em> to you, not the other way round.</h2>
+      <p class="lead">Choose your city, specialty and doctor, then confirm your appointment online in under a minute.</p>
+      <p style="margin:0 0 30px"><a class="cta-link" id="hero-cta" href="#auth" style="display:inline-block;padding:15px 28px;font-size:16px">Login / Register to Book</a></p>
+      <div class="stats">
+        <div><b>10+</b><span>Specialties</span></div>
+        <div><b>20+</b><span>Expert doctors</span></div>
+        <div><b>4</b><span>Cities</span></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="arch">
+        <svg viewBox="0 0 360 420" preserveAspectRatio="xMidYMid slice">
+          <circle cx="180" cy="170" r="104" fill="rgba(255,255,255,.07)"/>
+          <path d="M180 78C180 78 112 150 112 196a68 68 0 0 0 136 0C248 150 180 78 180 78z" fill="#ff7a59"/>
+          <path d="M170 150h20v22h22v20h-22v22h-20v-22h-22v-20h22z" fill="#fff"/>
+          <path class="ecg" pathLength="1" d="M24 330 L110 330 L132 330 L146 292 L166 364 L186 306 L200 330 L336 330" fill="none" stroke="#5fe0c8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chip c1"><i></i>Same-day confirmation</div>
+      <div class="chip c2"><i></i>Open Mon&ndash;Sat</div>
+    </div>
+  </div></section>
+
+  <div class="container booking-wrap" id="auth-section" hidden>
+    <div class="split auth-split">
+      <aside class="side">
+        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3C24 3 8 20 8 30a16 16 0 0 0 32 0C40 20 24 3 24 3z" fill="#fff" fill-opacity=".16"/><path d="M21 19h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#fff"/><circle cx="37" cy="10" r="4.5" fill="#ff7a59"/></svg>
+        <h2>Your health, one login away</h2>
+        <p class="lead">Create a free patient account to manage appointments across all our clinics.</p>
+        <ul class="ticks">
+          <li>Book with specialists in four cities</li>
+          <li>Instant confirmation numbers</li>
+          <li>Book a full week of follow-ups at once</li>
+        </ul>
+        <svg class="pulse" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true"><path class="ecg" pathLength="1" d="M0 24 L110 24 L124 24 L134 6 L148 42 L160 14 L170 24 L300 24" fill="none" stroke="#5fe0c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </aside>
+      <div class="pane" id="auth">
+        <div class="pane-head">
+          <div><h1>Patient Portal</h1><p>Login or create an account to book an appointment.</p></div>
+          <button id="close-auth" type="button" aria-label="Close login panel">&times;</button>
+        </div>
+        <p class="notice">Fictional training website for Selenium practice. Do not enter real patient or medical information or a real password.</p>
+        <div class="tabs" role="tablist">
+          <button id="tab-login" type="button" class="active" role="tab">Login</button>
+          <button id="tab-register" type="button" role="tab">Register</button>
+        </div>
+
+        <form id="login-form" class="auth-form" novalidate>
+          <div class="field"><label for="login-email">Email Address <span>*</span></label>
+            <input id="login-email" type="email" autocomplete="off" placeholder="Enter your email"></div>
+          <div class="field"><label for="login-password">Password <span>*</span></label>
+            <input id="login-password" type="password" autocomplete="off" placeholder="Enter your password"></div>
+          <button id="login-button" class="primary" type="submit">Login</button>
+          <div id="login-message" class="auth-msg" role="status" aria-live="polite"></div>
+        </form>
+
+        <form id="register-form" class="auth-form" novalidate hidden>
+          <div class="field"><label for="reg-name">Full Name <span>*</span></label>
+            <input id="reg-name" type="text" autocomplete="off" placeholder="Enter your full name"></div>
+          <div class="field"><label for="reg-email">Email Address <span>*</span></label>
+            <input id="reg-email" type="email" autocomplete="off" placeholder="Enter your email"></div>
+          <div class="field"><label for="reg-password">Password <span>*</span></label>
+            <input id="reg-password" type="password" autocomplete="off" placeholder="Create a password">
+            <div class="hint">At least 6 characters.</div></div>
+          <div class="field"><label for="reg-confirm">Confirm Password <span>*</span></label>
+            <input id="reg-confirm" type="password" autocomplete="off" placeholder="Re-enter your password"></div>
+          <button id="register-button" class="primary" type="submit">Create Account</button>
+          <div id="register-message" class="auth-msg" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container booking-wrap" id="booking-section" hidden>
+    <div class="split book-split">
+      <aside class="side">
+        <div class="who">Signed in as <b id="user-greeting"></b><div class="who-actions"><a id="view-bookings" class="vb" href="bookings.html">View My Bookings</a><button id="logout-button" type="button">Logout</button></div></div>
+        <h3>Your appointment</h3>
+        <div class="ticket" aria-label="Appointment preview">
+          <div class="doc"><div class="avatar" id="pv-avatar">?</div><small>Select a doctor to<br>see your appointment</small></div>
+          <div class="row"><span>City</span><b id="pv-place" class="empty">&mdash;</b></div>
+          <div class="row"><span>Specialty</span><b id="pv-specialty" class="empty">&mdash;</b></div>
+          <div class="row"><span>Doctor</span><b id="pv-doctor" class="empty">&mdash;</b></div>
+          <div class="row"><span>Date</span><b id="pv-date" class="empty">&mdash;</b></div>
+          <div class="row"><span>Time</span><b id="pv-time" class="empty">&mdash;</b></div>
+          <div class="row"><span>Patient</span><b id="pv-name" class="empty">&mdash;</b></div>
+        </div>
+      </aside>
+
+      <main class="pane" id="book">
+        <header class="pane-head">
+          <div><h1>Jeevadhara Clinic</h1><p>Online Appointment Booking System</p></div>
+        </header>
+        <p class="notice">Fictional training website for Selenium practice. Do not enter real patient or medical information.</p>
+
+        <div class="step" data-step>
+          <h3><i>1</i> Choose your doctor</h3>
+          <div class="grid three">
+            <div>
+              <label for="place">Place (City) <span>*</span></label>
+              <select id="place">
+                <option value="">-- Select Place --</option>
+                <option>Kakinada</option>
+                <option>Rajahmundry</option>
+                <option>Visakhapatnam</option>
+                <option>Vijayawada</option>
+              </select>
+            </div>
+            <div>
+              <label for="specialty">Medical Specialty <span>*</span></label>
+              <select id="specialty">
+                <option value="">-- Select Specialty --</option>
+                <option>Cardiology</option>
+                <option>Dermatology</option>
+                <option>Neurology</option>
+                <option>Orthopedist</option>
+                <option>Gastroenterologist</option>
+                <option>Pulmonologist</option>
+                <option>Gynecologist</option>
+                <option>Diabetologist</option>
+                <option>Radiologist</option>
+                <option>Ophthalmologist</option>
+              </select>
+            </div>
+            <div>
+              <label for="doctor">Doctor <span>*</span></label>
+              <select id="doctor" disabled>
+                <option value="">-- Select Doctor --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" data-step>
+          <h3><i>2</i> Pick a date &amp; time</h3>
+          <div class="grid">
+            <div>
+              <label for="appointment-date">Appointment Date <span>*</span></label>
+              <input id="appointment-date" type="date">
+            </div>
+            <div>
+              <label for="time-slot">Time Slot <span>*</span></label>
+              <select id="time-slot">
+                <option value="">-- Select Time --</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>02:00 PM</option>
+                <option>12:00 PM (Booked)</option>
+              </select>
+            </div>
+          </div>
+          <label class="check" for="book-week">
+            <input id="book-week" type="checkbox">
+            Book for one full week (7 consecutive days starting from the selected date)
+          </label>
+        </div>
+
+        <div class="step" data-step>
+          <h3><i>3</i> Patient details</h3>
+          <div class="grid">
+            <div>
+              <label for="patient-name">Patient Name <span>*</span></label>
+              <input id="patient-name" type="text" autocomplete="off" placeholder="Enter patient name">
+            </div>
+            <div>
+              <label for="patient-email">Email Address <span>*</span></label>
+              <input id="patient-email" type="email" autocomplete="off" placeholder="Enter email address">
+            </div>
+          </div>
+        </div>
+
+        <button id="confirm-booking" type="button" disabled>Confirm Appointment</button>
+        <div id="form-message" role="status" aria-live="polite"></div>
+        <div id="booking-summary" aria-live="polite"></div>
+        <button id="reopen-modal" type="button">Open Confirmation Window</button>
+
+        <section id="bookings-section" aria-label="My bookings">
+          <h2>My Bookings <span id="booking-count">0</span></h2>
+          <ul id="booking-list"></ul>
+          <p id="no-bookings">No bookings yet.</p>
+          <div class="slider-controls">
+            <button id="prev-slide" type="button" disabled>&lt; Previous</button>
+            <span id="slide-indicator">Slide 1 of 1</span>
+            <button id="next-slide" type="button" disabled>Next &gt;</button>
+          </div>
+          <button id="clear-bookings" type="button">Clear all bookings</button>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <section class="band" id="why"><div class="container">
+    <div class="section-title"><h3>Why patients choose us</h3><p>Simple, transparent and patient-first care at every step.</p></div>
+    <div class="features">
+      <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><span class="num">01</span><h4>Quick online booking</h4><p>Pick a slot and get your confirmation number instantly. No queues, no calls.</p></div>
+      <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></div><span class="num">02</span><h4>Experienced specialists</h4><p>Junior, senior and specialist doctors across ten medical departments.</p></div>
+      <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></div><span class="num">03</span><h4>Plan a full week</h4><p>Need follow-ups? Book seven consecutive days with one click.</p></div>
+    </div>
+  </div></section>
+
+  <section class="emergency" id="contact" style="margin-top:72px"><div class="container">
+    <div><h3>Need urgent help?</h3><p>Our emergency desk is open day and night.</p></div>
+    <div class="num">000-000-0000</div>
+  </div></section>
+
+  <footer>
+    <div class="container">
+      <div><h5>Jeevadhara Clinic</h5><p>A fictional multi-speciality clinic created for Selenium test automation practice.</p></div>
+      <div><h5>Locations</h5><p>Kakinada</p><p>Rajahmundry</p><p>Visakhapatnam</p><p>Vijayawada</p></div>
+      <div><h5>Hours</h5><p>Mon&ndash;Sat: 9 AM &ndash; 6 PM</p><p>Emergency: 24 x 7</p></div>
+    </div>
+    <div class="copy">&copy; Jeevadhara Clinic &mdash; demo website. Not a real medical service.</div>
+  </footer>
+
+  <div id="confirmation-modal" role="dialog" aria-modal="true" aria-label="Confirmation window">
+    <div class="modal-content">
+      <h2>Confirmation Window</h2>
+      <p id="modal-body">No booking has been made yet.</p>
+      <button id="close-modal" type="button">Close</button>
+    </div>
+  </div>
+
+
+<script>
+const $ = id => document.getElementById(id);
+const place = $('place'), specialty = $('specialty'), doctor = $('doctor'), dateInput = $('appointment-date'),
+      timeSlot = $('time-slot'), nameInput = $('patient-name'), emailInput = $('patient-email'),
+      weekBox = $('book-week'), confirmButton = $('confirm-booking'), message = $('form-message'),
+      summary = $('booking-summary'), modal = $('confirmation-modal'), modalBody = $('modal-body'),
+      list = $('booking-list'), noBookings = $('no-bookings'), countBadge = $('booking-count'),
+      indicator = $('slide-indicator'), prevBtn = $('prev-slide'), nextBtn = $('next-slide');
+
+const DOCTORS = {
+  Cardiology: ['Dr. Asha Rao(Spec)', 'Dr. Ravi Kumar(Senior)', 'Dr. Kiran Reddy(Junior)'],
+  Dermatology: ['Dr. Neha Das(Spec)', 'Dr. Ravi Nair(Senior)', 'Dr. Satish(Junior)'],
+  Neurology: ['Dr. Imran Ali(Spec)', 'Dr. Sanjeev Raj(Senior)', 'Dr. Sandhya(Junior)'],
+  Orthopedist:['Dr. Amrutha(Senior)', 'Dr.Sampath(Junior)'],
+  Gastroenterologist:['Dr. Shiva Kumar(Senior)', 'Dr. Vikas Rajesh(Junior)'],
+  Pulmonologist:['Dr. Sankara Govind(Senior)', 'Dr. Arjun Raj(Junior)'],
+  Gynecologist:['Dr.Varshini(Senior)', 'Dr. Kavya(Junior)'],
+  Diabetologist:['Dr.Siddarth'],
+  Radiologist:['Dr.Sanjay Kumar'],
+  Ophthalmologist:['Dr. Ravi Krishna', 'Dr. Narayana Reddy']
+};
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PAGE_SIZE = 3;               // bookings shown per slide
+const STORE_KEY = 'carepoint.bookings.v2';
+const USERS_KEY = 'jeevadhara.users.v1', SESSION_KEY = 'jeevadhara.session.v1';
+const touched = new Set();
+let bookings = [];                 // every booking made on this website
+let counter = 0;
+let lastBooking = null;            // array of bookings made by the latest Confirm click
+let currentSlide = 0;
+
+// ---------- dates ----------
+function pad(n) { return String(n).padStart(2, '0'); }
+function localDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function today() { return localDate(new Date()); }
+function addDays(iso, n) {
+  const p = iso.split('-').map(Number);
+  return localDate(new Date(p[0], p[1] - 1, p[2] + n));
+}
+function datesToBook() {
+  if (!dateInput.value) return [];
+  const n = weekBox.checked ? 7 : 1;
+  return Array.from({ length: n }, (_, i) => addDays(dateInput.value, i));
+}
+// First selected day on which this doctor + time slot is already taken ('' = none).
+function conflictDate() {
+  if (!doctor.value || !timeSlot.value) return '';
+  return datesToBook().find(d => bookings.some(b =>
+    b.doctor === doctor.value && b.date === d && b.time === timeSlot.value)) || '';
+}
+
+// Same email cannot hold two appointments at the same date + time (any doctor).
+function emailClashDate() {
+  const em = emailInput.value.trim().toLowerCase();
+  if (!EMAIL_RE.test(em) || !timeSlot.value) return '';
+  return datesToBook().find(d => bookings.some(b =>
+    b.email.toLowerCase() === em && b.date === d && b.time === timeSlot.value && b.doctor !== doctor.value)) || '';
+}
+
+// ---------- storage (bookings survive a page refresh) ----------
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify({ counter, bookings })); } catch (e) {} }
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) { const d = JSON.parse(raw); bookings = d.bookings || []; counter = d.counter || 0; }
+  } catch (e) {}
+}
+
+// ---------- validation ----------
+function showMessage(text, kind) {
+  message.textContent = text;
+  message.className = text ? (kind || 'error') : '';
+}
+function firstError() {
+  if (touched.has('name') && !nameInput.value.trim()) return 'Please enter patient name.';
+  if (touched.has('email') && !EMAIL_RE.test(emailInput.value.trim())) return 'Please enter a valid email address.';
+  if (touched.has('date') && (!dateInput.value || dateInput.value <= today())) return 'Please select a future date.';
+  if (touched.has('time') && timeSlot.value.includes('(Booked)')) return 'This time slot is already booked.';
+  const c = conflictDate();
+  if (c) return weekBox.checked ? 'Cannot book the week: ' + c + ' is already booked.'
+                                : 'This time slot is already booked.';
+  const e = emailClashDate();
+  if (e) return 'This email already has an appointment at this time with another doctor (' + e + '). Please choose a different time.';
+  return '';
+}
+function formIsValid() {
+  return Boolean(place.value && specialty.value && doctor.value && dateInput.value && dateInput.value > today() &&
+    timeSlot.value && !timeSlot.value.includes('(Booked)') && !conflictDate() && !emailClashDate() &&
+    nameInput.value.trim() && EMAIL_RE.test(emailInput.value.trim()));
+}
+function updateButton() { confirmButton.disabled = !formIsValid(); }
+function refresh() { showMessage(firstError(), 'error'); updateButton(); }
+function onFieldChange(field) { touched.add(field); summary.textContent = ''; refresh(); }
+
+// ---------- each user sees only their own bookings ----------
+// (slot-taken checks still look at ALL bookings, so two users can't take the same doctor/date/time)
+function mine() {
+  const u = currentUser();
+  return u ? bookings.filter(b => b.owner === u.email) : [];
+}
+
+// ---------- booking list shown as slides ----------
+function totalSlides() { return Math.max(1, Math.ceil(mine().length / PAGE_SIZE)); }
+function renderBookings() {
+  if (currentSlide > totalSlides() - 1) currentSlide = totalSlides() - 1;
+  list.innerHTML = '';
+  mine().slice(currentSlide * PAGE_SIZE, currentSlide * PAGE_SIZE + PAGE_SIZE).forEach(b => {
+    const li = document.createElement('li');
+    li.className = 'booking-item';
+    li.textContent = b.number + ' | ' + b.date + ' | ' + b.time + ' | ' + b.doctor + ' | ' + (b.place || '-') + ' | ' + b.name;
+    list.appendChild(li);
+  });
+  noBookings.style.display = mine().length ? 'none' : 'block';
+  countBadge.textContent = String(mine().length);
+  indicator.textContent = 'Slide ' + (currentSlide + 1) + ' of ' + totalSlides();
+  prevBtn.disabled = currentSlide <= 0;
+  nextBtn.disabled = currentSlide >= totalSlides() - 1;
+}
+prevBtn.addEventListener('click', () => { if (currentSlide > 0) { currentSlide -= 1; renderBookings(); } });
+nextBtn.addEventListener('click', () => { if (currentSlide < totalSlides() - 1) { currentSlide += 1; renderBookings(); } });
+$('clear-bookings').addEventListener('click', () => {
+  const me = currentUser() ? currentUser().email : '';
+  bookings = bookings.filter(b => b.owner !== me); lastBooking = null; currentSlide = 0; save();
+  summary.textContent = '';
+  renderBookings(); refresh();
+  showMessage('All bookings cleared.', 'success');
+});
+
+// ---------- form events ----------
+specialty.addEventListener('change', () => {
+  doctor.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = ''; placeholder.textContent = '-- Select Doctor --';
+  doctor.appendChild(placeholder);
+  (DOCTORS[specialty.value] || []).forEach(name => {
+    const option = document.createElement('option');
+    option.value = name; option.textContent = name;
+    doctor.appendChild(option);
+  });
+  doctor.disabled = !specialty.value;
+  updateButton();
+});
+doctor.addEventListener('change', refresh);
+place.addEventListener('change', refresh);
+weekBox.addEventListener('change', refresh);
+nameInput.addEventListener('input', () => onFieldChange('name'));
+emailInput.addEventListener('input', () => onFieldChange('email'));
+dateInput.addEventListener('input', () => onFieldChange('date'));
+dateInput.addEventListener('change', () => onFieldChange('date'));
+timeSlot.addEventListener('change', () => onFieldChange('time'));
+
+confirmButton.addEventListener('click', () => {
+  if (!formIsValid()) { showMessage(firstError() || 'Please complete all fields.', 'error'); return; }
+  const created = datesToBook().map(d => {
+    counter += 1;
+    return { number: 'CP-DEMO-' + (1000 + counter), doctor: doctor.value, specialty: specialty.value, place: place.value,
+             date: d, time: timeSlot.value, name: nameInput.value.trim(), email: emailInput.value.trim(),
+             owner: currentUser() ? currentUser().email : '' };
+  });
+  bookings.push(...created);
+  lastBooking = created;
+  save();
+  const first = created[0], last = created[created.length - 1];
+  if (created.length === 1) {
+    showMessage('Booking successful. Confirmation number: ' + first.number, 'success');
+    summary.textContent = 'Booking summary: ' + first.doctor + ' | ' + first.specialty + ' | ' + first.place +
+      ' | ' + first.date + ' | ' + first.time + ' | ' + first.name;
+  } else {
+    showMessage('Booking successful. Confirmation number: ' + first.number + ' to ' + last.number +
+      ' (' + created.length + ' days booked)', 'success');
+    summary.textContent = 'Booking summary: ' + first.doctor + ' | ' + first.specialty + ' | ' + first.place +
+      ' | ' + first.date + ' to ' + last.date + ' | ' + first.time + ' | ' + first.name + ' (' + created.length + ' days)';
+  }
+  currentSlide = 0;
+  renderBookings();
+  updateButton();
+});
+
+// ---------- confirmation window ----------
+function openModal() {
+  if (lastBooking && lastBooking.length === 1) {
+    const b = lastBooking[0];
+    modalBody.textContent = 'Confirmation ' + b.number + ' for ' + b.name + ' with ' + b.doctor +
+      ' at ' + b.place + ' on ' + b.date + ' at ' + b.time + '.';
+  } else if (lastBooking) {
+    const f = lastBooking[0], l = lastBooking[lastBooking.length - 1];
+    modalBody.textContent = 'Confirmations ' + f.number + ' to ' + l.number + ' for ' + f.name + ' with ' +
+      f.doctor + ' at ' + f.place + ' from ' + f.date + ' to ' + l.date + ' at ' + f.time + '.';
+  } else if (mine().length) {
+    modalBody.textContent = 'You have ' + mine().length + ' booking(s) in total.';
+  } else {
+    modalBody.textContent = 'No booking has been made yet.';
+  }
+  modal.classList.add('open');
+}
+function closeModal() { modal.classList.remove('open'); }
+$('reopen-modal').addEventListener('click', openModal);
+$('close-modal').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ---------- initial state ----------
+(function init() {
+  const d = new Date(); d.setDate(d.getDate() + 1);
+  dateInput.min = localDate(d);
+  doctor.disabled = true;
+  load();
+  renderBookings();
+  updateButton();
+})();
+
+// ---------- login / registration ----------
+function readJSON(k, d) { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : d; } catch (e) { return d; } }
+function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function currentUser() {
+  const em = readJSON(SESSION_KEY, null);
+  return em ? readJSON(USERS_KEY, []).find(u => u.email === em) || null : null;
+}
+function authMsg(id, text, kind) { const el = $(id); el.textContent = text; el.className = 'auth-msg' + (text && kind ? ' ' + kind : ''); }
+let authOpen = false;
+function showView() {
+  const u = currentUser();
+  $('auth-section').hidden = !(authOpen && !u);
+  $('booking-section').hidden = !u;
+  $('user-greeting').textContent = u ? u.name + ' (' + u.email + ')' : '';
+  $('nav-bookings').hidden = !u;
+  $('nav-cta').textContent = u ? 'Book Now' : 'Login / Register';
+  $('hero-cta').textContent = u ? 'Book an Appointment' : 'Login / Register to Book';
+  const target = u ? '#book' : '#auth';
+  ['nav-cta', 'nav-book', 'hero-cta'].forEach(id => $(id).setAttribute('href', target));
+  document.querySelector('.hero').style.paddingBottom = '';
+}
+function openAuth(e) {
+  if (currentUser()) return;            // logged in: link just scrolls to the booking form
+  if (e) e.preventDefault();
+  authOpen = true; showView();
+  $('auth-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+['nav-cta', 'nav-book', 'hero-cta'].forEach(id => $(id).addEventListener('click', openAuth));
+$('close-auth').addEventListener('click', () => { authOpen = false; showView(); window.scrollTo(0, 0); });
+function resetSessionUI() {
+  lastBooking = null; currentSlide = 0; summary.textContent = ''; showMessage('');
+}
+function selectTab(which) {
+  const login = which === 'login';
+  $('login-form').hidden = !login; $('register-form').hidden = login;
+  $('tab-login').classList.toggle('active', login); $('tab-register').classList.toggle('active', !login);
+}
+$('tab-login').addEventListener('click', () => selectTab('login'));
+$('tab-register').addEventListener('click', () => selectTab('register'));
+
+$('register-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('reg-name').value.trim(), email = $('reg-email').value.trim().toLowerCase(),
+        pw = $('reg-password').value, pw2 = $('reg-confirm').value;
+  if (!name) return authMsg('register-message', 'Please enter your full name.', 'error');
+  if (!EMAIL_RE.test(email)) return authMsg('register-message', 'Please enter a valid email address.', 'error');
+  if (pw.length < 6) return authMsg('register-message', 'Password must be at least 6 characters.', 'error');
+  if (pw !== pw2) return authMsg('register-message', 'Passwords do not match.', 'error');
+  const users = readJSON(USERS_KEY, []);
+  if (users.some(u => u.email === email)) return authMsg('register-message', 'This email is already registered. Please login.', 'error');
+  users.push({ name, email, password: pw });
+  writeJSON(USERS_KEY, users);
+  ['reg-name', 'reg-email', 'reg-password', 'reg-confirm'].forEach(id => $(id).value = '');
+  authMsg('register-message', '');
+  selectTab('login');
+  $('login-email').value = email;
+  authMsg('login-message', 'Registration successful. Please login.', 'success');
+});
+
+$('login-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = $('login-email').value.trim().toLowerCase(), pw = $('login-password').value;
+  if (!email || !pw) return authMsg('login-message', 'Please enter email and password.', 'error');
+  const u = readJSON(USERS_KEY, []).find(x => x.email === email && x.password === pw);
+  if (!u) return authMsg('login-message', 'Invalid email or password.', 'error');
+  writeJSON(SESSION_KEY, u.email);
+  resetSessionUI();
+  $('login-password').value = ''; authMsg('login-message', '');
+  showView();
+  renderBookings();
+  window.scrollTo(0, 0);
+});
+
+$('logout-button').addEventListener('click', () => {
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  resetSessionUI();
+  authOpen = false;
+  $('login-email').value = ''; authMsg('login-message', 'You have been logged out.', 'success');
+  selectTab('login');
+  showView();
+  renderBookings();
+  window.scrollTo(0, 0);
+});
+showView();
+renderBookings();
+if (/[?&]login=1/.test(location.search)) openAuth();
+
+// ---------- live appointment preview (sidebar) ----------
+function setPv(id, text) { const el = $(id); el.textContent = text || '\u2014'; el.classList.toggle('empty', !text); }
+function updatePreview() {
+  setPv('pv-place', place.value); setPv('pv-specialty', specialty.value); setPv('pv-doctor', doctor.value);
+  const d = dateInput.value;
+  setPv('pv-date', d ? (weekBox.checked ? d + ' (+6 days)' : d) : '');
+  setPv('pv-time', timeSlot.value); setPv('pv-name', nameInput.value.trim());
+  const av = $('pv-avatar'), dn = doctor.value.replace(/^Dr\.?\s*/, '').replace(/\(.*\)/, '').trim();
+  av.textContent = dn ? dn.split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('') : '?';
+  av.classList.toggle('on', !!dn);
+  const done = [place.value && specialty.value && doctor.value, dateInput.value && timeSlot.value,
+                nameInput.value.trim() && EMAIL_RE.test(emailInput.value.trim())];
+  document.querySelectorAll('.step').forEach((el, i) => el.classList.toggle('done', !!done[i]));
+}
+$('booking-section').addEventListener('input', updatePreview);
+$('booking-section').addEventListener('change', updatePreview);
+$('clear-bookings').addEventListener('click', updatePreview);
+updatePreview();
+</script>
+</body>
+</html>
